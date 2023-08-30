@@ -20,6 +20,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 CORS_ORIGIN_ALLOW_ALL = True
 
+CORS_ALLOW_CREDENTIALS = True   
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
@@ -45,7 +47,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'Home',
     'rest_framework',
-    'rest_framework_simplejwt.token_blacklist',
+    'djoser',
+    'rest_framework_simplejwt',
 ]
 
 REST_FRAMEWORK = {
@@ -54,24 +57,27 @@ REST_FRAMEWORK = {
     ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
     ),
 }
 
 SIMPLE_JWT = {
-     'ACCESS_TOKEN_LIFETIME': timedelta(days=2),
+     'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
      'REFRESH_TOKEN_LIFETIME': timedelta(days=2),
      'ROTATE_REFRESH_TOKENS': True,
      'BLACKLIST_AFTER_ROTATION': True
 }
 
+DJOSER = {
+    'LOGIN_FIELD' : 'email',
+    'USER_CREATE_PASSWORD_RETYPE':True,
+}
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',

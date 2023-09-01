@@ -6,7 +6,8 @@ from django.http import HttpResponse, JsonResponse
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import status
 from django.views.decorators.csrf import csrf_exempt
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
+from .models import EmailGroup
 import json
 
 
@@ -29,13 +30,11 @@ class HomeView(APIView):
 @csrf_exempt
 def Register(request):
     if(request.method == 'POST'):
-        print("I am in")
         content = json.loads(request.body)
         print(content)
         name = content['data']['name']
         username = content['data']['username']
         password = content['data']['password']
-        print(name, "   ", username, "  ", password)
         if User.objects.filter(username=username).exists():
             return HttpResponse("notunique")
         print(content['data'])
@@ -48,16 +47,29 @@ def Register(request):
         return HttpResponse("ok")
         
 
-class LoginView(APIView):
+
+class FormGroup(APIView):
     permission_classes = (IsAuthenticated,)
     def post(self, request):
         try:
-            print(request.data)
-            
+            print(request.data['grpname'])
+            group1, created1 = Group.objects.get_or_create(name=request.data['grpname'])
+            print(group1)
+            print(created1)
+
             return Response(status=status.HTTP_205_RESET_CONTENT)
         except Exception as e:
             print(e)
             return Response(status=status.HTTP_400_BAD_REQUEST)
+    
+    def get(self, request):
+        getAllGroups = Group.objects.values_list('name', flat=True)
+        print(getAllGroups)
+        li = []
+        for name in getAllGroups:
+            print(name)
+            li.append(name)
+        return JsonResponse({'data' : json.dumps(li)})
 
 class LogoutView(APIView):
     permission_classes = (IsAuthenticated,)

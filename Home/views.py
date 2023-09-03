@@ -82,7 +82,7 @@ class AddingExpenses(APIView):
             email = request.data['email']
             expense = request.data['expense']
             groupname = request.data['groupname']
-            txt = email + "added " + expense
+            txt = email + "  added " + expense
             if Expenses.objects.filter(group_name = groupname).exists():
                 group_instance = Expenses.objects.get(group_name = groupname)
                 list_item = group_instance.listofExpenses
@@ -92,11 +92,47 @@ class AddingExpenses(APIView):
                 new_list = Expenses(group_name = groupname, listofExpenses= [txt])
                 new_list.save()
 
-
+            return Response(status=status.HTTP_205_RESET_CONTENT)
             
         except Exception as e:
             print(e)
             return Response(status=status.HTTP_400_BAD_REQUEST)
+
+class EachGroupList(APIView):
+    permission_classes = (IsAuthenticated,)
+    def post(self, request):
+        try:
+            groupname = request.data['groupname']
+            ans = []
+            if Expenses.objects.filter(group_name = groupname).exists():
+                group_instance = Expenses.objects.get(group_name = groupname)
+                list_item = group_instance.listofExpenses
+                #print(list_item)
+                ans = list_item
+
+            return Response(ans)
+            
+        except Exception as e:
+            print(e)
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+class GroupMembersList(APIView):
+    permission_classes = (IsAuthenticated,)
+    def post(self, request):
+        try:
+            groupname = request.data['groupname']
+            print(groupname)
+            ans = []
+            group_instance = Group.objects.get(name = groupname)
+            users_group = User.objects.filter(groups = group_instance)
+            ans = [user.username for user in users_group]
+
+            return Response(ans)
+            
+        except Exception as e:
+            print(e)
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
 
 class FormGroup(APIView):
     permission_classes = (IsAuthenticated,)

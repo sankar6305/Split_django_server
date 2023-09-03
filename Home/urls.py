@@ -6,5 +6,7 @@ urlpatterns = [
     path('home/', views.HomeView.as_view(), name ='homeView'),
     path('register/', views.Register, name ='register'),
     path('formgroup/', views.FormGroup.as_view(), name ='formgroup'),
-    path('eachGroup/<id>', views.EachGroup.as_view(), name ='eachgroup'),
+    path('addingusers/', views.AddingUsers.as_view(), name ='AddingUsers'),
+    path('addingexpenses/', views.AddingExpenses.as_view(), name ='AddingExpenses'),
+    path('getthegroups/', views.GetTheGroups.as_view(), name ='GetTheGroups'),
 ]

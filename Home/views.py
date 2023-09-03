@@ -7,7 +7,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import status
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User, Group
-from .models import EmailGroup
+from .models import EmailGroup, MemberInGroups, Expenses
 import json
 
 
@@ -47,13 +47,53 @@ def Register(request):
         return HttpResponse("ok")
         
 
-class EachGroup(APIView):
+class AddingUsers(APIView):
     permission_classes = (IsAuthenticated,)
     def post(self, request):
         try:
-            refresh_token = request.data["gropname"]
-            print(refresh_token)
+            groupname = request.data["groupname"]
+            print(groupname)
+            email = request.data['username']
+            group1, created1 = Group.objects.get_or_create(name=request.data['groupname'])
+            print(group1)
+            #saving the groups emails and group admin
+            user = User.objects.get(username = email)
+            user.groups.add(group1)
+            user.save()
+
+            #add the user included groups 
+            user1 = User.objects.get(username = email)
+            if MemberInGroups.objects.filter(user = user1).exists():
+                user_groups = MemberInGroups.objects.get(user = user1)
+            else:
+                user_groups = MemberInGroups.objects.create(user = user)
+            user_groups.GroupsInIt.add(group1)
+            user_groups.save()
+            print(email)
             return Response(status=status.HTTP_205_RESET_CONTENT)
+        except Exception as e:
+            print(e)
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+class AddingExpenses(APIView):
+    permission_classes = (IsAuthenticated,)
+    def post(self, request):
+        try:
+            email = request.data['email']
+            expense = request.data['expense']
+            groupname = request.data['groupname']
+            txt = email + "added " + expense
+            if Expenses.objects.filter(group_name = groupname).exists():
+                group_instance = Expenses.objects.get(group_name = groupname)
+                list_item = group_instance.listofExpenses
+                list_item.append(txt)
+                group_instance.save()
+            else:
+                new_list = Expenses(group_name = groupname, listofExpenses= [txt])
+                new_list.save()
+
+
+            
         except Exception as e:
             print(e)
             return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -66,23 +106,48 @@ class FormGroup(APIView):
             email = request.data['email']
             group1, created1 = Group.objects.get_or_create(name=request.data['grpname'])
             print(group1)
+            #saving the groups emails and group admin
             user = User.objects.get(username = email)
             user.groups.add(group1)
             user.save()
+
+            #add the user included groups 
+            user1 = User.objects.get(username = email)
+            if MemberInGroups.objects.filter(user = user1).exists():
+                user_groups = MemberInGroups.objects.get(user = user1)
+            else:
+                user_groups = MemberInGroups.objects.create(user = user)
+            user_groups.GroupsInIt.add(group1)
+            user_groups.save()
             print(created1)
             return Response(status=status.HTTP_205_RESET_CONTENT)
         except Exception as e:
             print(e)
             return Response(status=status.HTTP_400_BAD_REQUEST)
     
-    def get(self, request):
-        getAllGroups = Group.objects.values_list('name', flat=True)
-        print(getAllGroups)
-        li = []
-        for name in getAllGroups:
-            print(name)
-            li.append(name)
-        return JsonResponse({'data' : json.dumps(li)})
+class GetTheGroups(APIView):
+    permission_classes = (IsAuthenticated,)
+    def post(self, request):
+        try:
+            email = request.data['email']
+
+            #add the user included groups 
+            user1 = User.objects.get(username = email)
+            if MemberInGroups.objects.filter(user = user1).exists():
+                user_groups = MemberInGroups.objects.get(user = user1)
+            else:
+                return Response([])
+            print(email)
+            print(user_groups.user)
+            data = user_groups.GroupsInIt.all()
+            data_li = []
+            for i in data:
+                data_li.append(i.name)
+            print(data_li)
+            return Response(data_li)
+        except Exception as e:
+            print(e)
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
 class LogoutView(APIView):
     permission_classes = (IsAuthenticated,)

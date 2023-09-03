@@ -17,20 +17,16 @@ class EmailGroup(models.Model):
 
 
 class MemberInGroups(models.Model):
-    email = models.EmailField(unique=True, blank=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     GroupsInIt = models.ManyToManyField(Group)
 
-    def __str__(self):
-        return self.email
+class Expenses(models.Model):
+    group_name = models.CharField(max_length=100, default='')
+    listofExpenses = models.JSONField()
 
-    def clean(self):
-        if not User.objects.filter(email=self.email).exists():
-            raise Exception("Email address must be registered.")
 
-    def save(self, *args, **kwargs):
-        self.clean()
-        super(MemberInGroups, self).save(*args, **kwargs)
 
+    
 
 
 

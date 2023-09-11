@@ -46,6 +46,44 @@ def Register(request):
     else:
         return HttpResponse("ok")
         
+class Update_delete_function(APIView):
+    permission_classes=(IsAuthenticated,)
+    def post(slef, request):
+        try:
+            operationtype = request.data['operationtype']
+            index = request.data['index_operation']
+            groupname = request.data['grpname']
+
+            if operationtype == 'delete':
+                group_instance = Expenses.objects.get(group_name = groupname)
+                group_instance.delete_by_index(index)
+            elif operationtype=='update':
+                #we can update in it later, okk naa..ok
+                pass
+
+            return Response(status=status.HTTP_202_ACCEPTED)
+
+        except Exception as e:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+class Update_delete_Group(APIView):
+    permission_classes=(IsAuthenticated,)
+    def post(slef, request):
+        try:
+            #try it tmro or night
+            # operationtype = request.data['operationtype']
+            # groupname = request.data['groupname']
+            # email = request.data['email']
+            # if operationtype == 'delete':
+            #     MemberInGroups.objects.get(user = email)
+            # elif operationtype=='update':
+            #     #we can update in it later, okk naa..ok
+            #     pass
+
+            return Response(status=status.HTTP_202_ACCEPTED)
+
+        except Exception as e:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
 class AddingUsers(APIView):
     permission_classes = (IsAuthenticated,)
@@ -86,6 +124,7 @@ class AddingExpenses(APIView):
             if Expenses.objects.filter(group_name = groupname).exists():
                 group_instance = Expenses.objects.get(group_name = groupname)
                 list_item = group_instance.listofExpenses
+                #print(list_item)
                 list_item.append(txt)
                 group_instance.save()
             else:
@@ -107,7 +146,7 @@ class EachGroupList(APIView):
             if Expenses.objects.filter(group_name = groupname).exists():
                 group_instance = Expenses.objects.get(group_name = groupname)
                 list_item = group_instance.listofExpenses
-                #print(list_item)
+                # print(list_item)
                 ans = list_item
 
             return Response(ans)

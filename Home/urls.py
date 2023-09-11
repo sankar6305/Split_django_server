@@ -10,5 +10,7 @@ urlpatterns = [
     path('addingexpenses/', views.AddingExpenses.as_view(), name ='AddingExpenses'),
     path('eachgrouplist/', views.EachGroupList.as_view(), name ='EachGroupList'),
     path('UsersList/', views.GroupMembersList.as_view(), name ='GroupMembersList'),
+    path('Updatedeletefunction/', views.Update_delete_function.as_view(), name ='Update_delete_function'),
+    path('UpdatedeleteGroup/', views.Update_delete_Group.as_view(), name ='Update_delete_Group'),
     path('getthegroups/', views.GetTheGroups.as_view(), name ='GetTheGroups'),
 ]

@@ -24,6 +24,12 @@ class Expenses(models.Model):
     group_name = models.CharField(max_length=100, default='')
     listofExpenses = models.JSONField()
 
+    def delete_by_index(self, index):
+        index = len(self.listofExpenses) - 1 - index
+        del self.listofExpenses[index]
+        self.save()
+
+
 
 
     

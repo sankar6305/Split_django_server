@@ -71,14 +71,23 @@ class Update_delete_Group(APIView):
     def post(slef, request):
         try:
             #try it tmro or night
-            # operationtype = request.data['operationtype']
-            # groupname = request.data['groupname']
-            # email = request.data['email']
-            # if operationtype == 'delete':
-            #     MemberInGroups.objects.get(user = email)
-            # elif operationtype=='update':
-            #     #we can update in it later, okk naa..ok
-            #     pass
+            operationtype = request.data['typeofoperation']
+            groupname = request.data['groupname']
+            email = request.data['email']
+            user1 = User.objects.get(username = email)
+    
+            if operationtype == 'delete':
+                usergroups = MemberInGroups.objects.get(user = user1)
+                try:
+                    group_to_remove = Group.objects.get(name = groupname)
+                    usergroups.DeleteGroupeName(group_to_remove)
+                except Exception as e:
+                    print("Exception bro")
+                    print(usergroups)
+
+            elif operationtype=='update':
+                #we can update in it later, okk naa..ok
+                pass
 
             return Response(status=status.HTTP_202_ACCEPTED)
 
@@ -93,8 +102,6 @@ class AddingUsers(APIView):
             print(groupname)
             email = request.data['username']
             group1, created1 = Group.objects.get_or_create(name=request.data['groupname'])
-            print(group1)
-            #saving the groups emails and group admin
             user = User.objects.get(username = email)
             user.groups.add(group1)
             user.save()

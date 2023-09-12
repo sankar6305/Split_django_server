@@ -19,6 +19,16 @@ class EmailGroup(models.Model):
 class MemberInGroups(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     GroupsInIt = models.ManyToManyField(Group)
+    
+    def DeleteGroupeName(self, group_to_remove):
+        self.GroupsInIt.remove(group_to_remove)
+
+#I want to add deleted group usersnames in seperate teble
+
+class DeletedGroups(models.Model):
+    username = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    groupsDeleted = models.ManyToManyField(Group)
+        
 
 class Expenses(models.Model):
     group_name = models.CharField(max_length=100, default='')

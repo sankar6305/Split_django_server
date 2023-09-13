@@ -70,12 +70,12 @@ class Update_delete_Group(APIView):
     permission_classes=(IsAuthenticated,)
     def post(slef, request):
         try:
-            #try it tmro or night
             operationtype = request.data['typeofoperation']
             groupname = request.data['groupname']
             email = request.data['email']
             user1 = User.objects.get(username = email)
-    
+            #Get the things
+            
             if operationtype == 'delete':
                 usergroups = MemberInGroups.objects.get(user = user1)
                 try:

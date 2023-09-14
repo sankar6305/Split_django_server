@@ -26,8 +26,8 @@ class MemberInGroups(models.Model):
 #I want to add deleted group usersnames in seperate teble
 
 class DeletedGroups(models.Model):
-    username = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
-    groupsDeleted = models.ManyToManyField(Group)
+    username = models.CharField(max_length=100, default='')
+    listOfGroups = models.JSONField(null=False, default=dict, blank=True)
         
 
 class Expenses(models.Model):

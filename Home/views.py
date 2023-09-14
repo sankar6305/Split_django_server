@@ -7,7 +7,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import status
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User, Group
-from .models import EmailGroup, MemberInGroups, Expenses
+from .models import EmailGroup, MemberInGroups, Expenses, DeletedGroups
 import json
 
 
@@ -70,6 +70,7 @@ class Update_delete_Group(APIView):
     permission_classes=(IsAuthenticated,)
     def post(slef, request):
         try:
+            print("entered here aa")
             operationtype = request.data['typeofoperation']
             groupname = request.data['groupname']
             email = request.data['email']
@@ -81,6 +82,15 @@ class Update_delete_Group(APIView):
                 try:
                     group_to_remove = Group.objects.get(name = groupname)
                     usergroups.DeleteGroupeName(group_to_remove)
+                    
+                    if DeletedGroups.objects.filter(username = email).exists():
+                        group_instance = DeletedGroups.objects.get(username = email)
+                        list_item = group_instance.listOfGroups
+                        list_item.append(groupname)
+                        group_instance.save()
+                    else:
+                        new_list = DeletedGroups(username = email, listOfGroups = [groupname])
+                        new_list.save()
                 except Exception as e:
                     print("Exception bro")
                     print(usergroups)
@@ -120,6 +130,8 @@ class AddingUsers(APIView):
             print(e)
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
+            
+
 class AddingExpenses(APIView):
     permission_classes = (IsAuthenticated,)
     def post(self, request):
@@ -139,6 +151,24 @@ class AddingExpenses(APIView):
                 new_list.save()
 
             return Response(status=status.HTTP_205_RESET_CONTENT)
+            
+        except Exception as e:
+            print(e)
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+class EachGroupDeletedList(APIView):
+    permission_classes = (IsAuthenticated,)
+    def post(self, request):
+        try:
+            email = request.data['email']
+            ans = []
+            if DeletedGroups.objects.filter(username = email).exists():
+                group_instance = DeletedGroups.objects.get(username = email)
+                list_item = group_instance.listOfGroups
+                # print(list_item)
+                ans = list_item
+
+            return Response(ans)
             
         except Exception as e:
             print(e)

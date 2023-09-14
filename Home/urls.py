@@ -13,4 +13,5 @@ urlpatterns = [
     path('Updatedeletefunction/', views.Update_delete_function.as_view(), name ='Update_delete_function'),
     path('UpdatedeleteGroup/', views.Update_delete_Group.as_view(), name ='Update_delete_Group'),
     path('getthegroups/', views.GetTheGroups.as_view(), name ='GetTheGroups'),
+    path('gettheDeletedgroups/', views.EachGroupDeletedList.as_view(), name ='EachGroupDeletedList'),
 ]

@@ -45,23 +45,23 @@ def Register(request):
         return HttpResponse("ok")
     else:
         return HttpResponse("ok")
-# @csrf_exempt
-# def ChangePassword(request):
-#     if(request.method == 'POST'):
-#         content = json.loads(request.body)
-#         print(content)
-#         username = content['email']
-#         password = content['password']
-#         if User.objects.filter(username=username).exists():
-#             user = User.objects.get(username=username)
-#             user.set_password(password)
-#             user.save()
-#         else:
-#             return HttpResponse("Not a registered user")
+@csrf_exempt
+def ChangePassword(request):
+    if(request.method == 'POST'):
+        content = json.loads(request.body)
+        print(content)
+        username = content['email']
+        password = content['password']
+        if User.objects.filter(username=username).exists():
+            user = User.objects.get(username=username)
+            user.set_password(password)
+            user.save()
+        else:
+            return HttpResponse("Not a registered user")
 
-#         return HttpResponse("ok")
-#     else:
-#         return HttpResponse("ok")
+        return HttpResponse("ok")
+    else:
+        return HttpResponse("ok")
 
         
 class Update_delete_function(APIView):

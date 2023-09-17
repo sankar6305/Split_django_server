@@ -5,6 +5,7 @@ urlpatterns = [
     path('', views.Home, name='Home'),
     path('home/', views.HomeView.as_view(), name ='homeView'),
     path('register/', views.Register, name ='register'),
+    path('changepassword/', views.ChangePassword, name ='changepassword'),
     path('formgroup/', views.FormGroup.as_view(), name ='formgroup'),
     path('addingusers/', views.AddingUsers.as_view(), name ='AddingUsers'),
     path('addingexpenses/', views.AddingExpenses.as_view(), name ='AddingExpenses'),

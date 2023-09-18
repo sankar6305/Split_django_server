@@ -45,6 +45,8 @@ def Register(request):
         return HttpResponse("ok")
     else:
         return HttpResponse("ok")
+
+
 @csrf_exempt
 def ChangePassword(request):
     if(request.method == 'POST'):
